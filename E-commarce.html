@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple E‑Commerce Portal - Single File</title>
+  <style>
+    /* --- Basic reset & layout --- */
+    :root{--accent:#0b69ff;--muted:#6b7280;--card:#fff;--bg:#f3f4f6}
+    *{box-sizing:border-box}
+    body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; background:var(--bg); color:#111}
+    header{background:linear-gradient(90deg,#fff 0,#f8fbff); border-bottom:1px solid #e6eefc; position:sticky; top:0; z-index:10}
+    .container{max-width:1100px; margin:0 auto; padding:20px}
+    nav{display:flex; align-items:center; gap:16px}
+    .brand{font-weight:700; font-size:20px; color:var(--accent)}
+    .menu{margin-left:auto; display:flex; gap:12px}
+    .menu a{padding:8px 12px; text-decoration:none; color:#0f1724; border-radius:8px}
+    .menu a:hover{background:#eef4ff}
+
+    main{padding:28px 16px}
+    .grid{display:grid; grid-template-columns:1fr 360px; gap:20px}
+    .card{background:var(--card); border-radius:12px; padding:16px; box-shadow:0 1px 4px rgba(2,6,23,0.06)}
+    h2{margin:0 0 8px 0}
+    small{color:var(--muted)}
+
+    /* Product list */
+    .products{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px}
+    .product{padding:12px; border-radius:10px; background:#fff; display:flex; flex-direction:column; gap:8px}
+    .product img{width:100%; height:130px; object-fit:cover; border-radius:8px}
+    .product .meta{display:flex; justify-content:space-between; align-items:center}
+    button{background:var(--accent); color:#fff; border:0; padding:8px 10px; border-radius:8px; cursor:pointer}
+    button.secondary{background:#f3f4f6; color:#111}
+
+    /* Forms */
+    form{display:flex; flex-direction:column; gap:10px}
+    label{font-size:13px}
+    input, textarea, select{padding:10px; border-radius:8px; border:1px solid #e6eefc}
+    .muted{color:var(--muted); font-size:13px}
+
+    /* Small screens */
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr}
+      .menu{display:none}
+    }
+
+    /* Simple footer */
+    footer{padding:18px; text-align:center; color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container" style="display:flex; align-items:center; gap:12px;">
+      <nav style="width:100%">
+        <span class="brand">Apex GP</span>
+        <div class="menu">
+          <a href="#home">Home</a>
+          <a href="#products">Products</a>
+          <a href="#contact">Contact Us</a>
+          <a href="#about">About Us</a>
+          <a href="#account" id="accountLink">Login / Register</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="home" class="card" style="margin-bottom:14px">
+      <h2>Welcome to Apex GP - Demo E‑Commerce</h2>
+      <p class="muted">A single-file demo: navigation, registration/login validation, orders, wishlist, reviews, customer care and reporting.</p>
+    </section>
+
+    <div class="grid">
+      <section>
+        <section id="products" class="card">
+          <h2>Product items</h2>
+          <div class="products" id="productList"></div>
+        </section>
+
+        <section id="reviews" class="card" style="margin-top:12px">
+          <h2>Comments & Reviews</h2>
+          <form id="reviewForm">
+            <label for="reviewName">Name</label>
+            <input id="reviewName" required />
+            <label for="reviewText">Review</label>
+            <textarea id="reviewText" rows="3" required></textarea>
+            <button type="submit">Post review</button>
+          </form>
+          <div id="reviewsList" style="margin-top:12px"></div>
+        </section>
+
+        <section id="customerCare" class="card" style="margin-top:12px">
+          <h2>Customer Care</h2>
+          <p class="muted">Use this form to create a ticket. Tickets appear below.</p>
+          <form id="ticketForm">
+            <label for="ticketName">Name</label>
+            <input id="ticketName" required />
+            <label for="issue">Issue (short)</label>
+            <input id="issue" required />
+            <label for="issueDesc">Description</label>
+            <textarea id="issueDesc" rows="3"></textarea>
+            <button type="submit">Create Ticket</button>
+          </form>
+          <div id="tickets" style="margin-top:12px"></div>
+        </section>
+
+        <section id="reporting" class="card" style="margin-top:12px">
+          <h2>Reporting / Flag an issue</h2>
+          <form id="reportForm">
+            <label for="reportItem">Item ID (or "site")</label>
+            <input id="reportItem" required />
+            <label for="reportReason">Reason</label>
+            <select id="reportReason">
+              <option value="fraud">Fraud / Scam</option>
+              <option value="abuse">Abusive content</option>
+              <option value="other">Other</option>
+            </select>
+            <textarea id="reportDesc" rows="2" placeholder="Details (optional)"></textarea>
+            <button type="submit">Send Report</button>
+          </form>
+          <div id="reports" style="margin-top:12px"></div>
+        </section>
+      </section>
+
+      <aside>
+        <div id="account" class="card">
+          <h2 id="accountHeading">Login / Register</h2>
+          <div id="authForms">
+            <!-- Registration -->
+            <div id="registerBox">
+              <form id="registerForm">
+                <label for="rname">Full name</label>
+                <input id="rname" required />
+                <label for="remail">Email</label>
+                <input id="remail" type="email" required />
+                <label for="rpassword">Password (min 6)</label>
+                <input id="rpassword" type="password" required minlength="6" />
+                <label for="rcpassword">Confirm password</label>
+                <input id="rcpassword" type="password" required minlength="6" />
+                <small class="muted">Passwords must match and be at least 6 characters.</small>
+                <button type="submit">Register</button>
+              </form>
+            </div>
+
+            <hr style="margin:12px 0" />
+
+            <!-- Login -->
+            <div id="loginBox">
+              <form id="loginForm">
+                <label for="lemail">Email</label>
+                <input id="lemail" type="email" required />
+                <label for="lpassword">Password</label>
+                <input id="lpassword" type="password" required />
+                <button type="submit">Login</button>
+              </form>
+            </div>
+
+            <div id="accountActions" style="display:none; margin-top:12px">
+              <p>Welcome, <strong id="userNameDisplay"></strong></p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <button id="viewOrders">Orders</button>
+                <button id="viewWishlist">Wishlist</button>
+                <button id="logoutBtn" class="secondary">Logout</button>
+              </div>
+            </div>
+
+          </div>
+
+          <div id="lists" style="margin-top:12px">
+            <div class="card" style="margin-bottom:8px">
+              <h3 style="margin:0 0 8px 0">Orders</h3>
+              <div id="ordersList"><small class="muted">No orders yet</small></div>
+            </div>
+            <div class="card">
+              <h3 style="margin:0 0 8px 0">Wishlist</h3>
+              <div id="wishlistList"><small class="muted">No wishlist items</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>About Us</h3>
+          <p class="muted">Apex GP is a demo portal created for teaching and prototyping purposes.</p>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="container">© Apex GP — Demo E‑Commerce portal</div>
+  </footer>
+
+  <script>
+    /* ------------------ Sample data ------------------ */
+    const sampleProducts = [
+      {id:'p1', title:'Racing Helmet', price:2499, img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=60'},
+      {id:'p2', title:'Carbon Wheel Set', price:7999, img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=60'},
+      {id:'p3', title:'Driver Gloves', price:799, img:'https://images.unsplash.com/photo-1520975698515-5a4a7c8145b5?auto=format&fit=crop&w=800&q=60'},
+      {id:'p4', title:'Pit Crew Jacket', price:1999, img:'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=60'}
+    ];
+
+    // Local state persisted to localStorage for demo
+    const state = {
+      products: sampleProducts,
+      wishlist: JSON.parse(localStorage.getItem('demo_wishlist') || '[]'),
+      orders: JSON.parse(localStorage.getItem('demo_orders') || '[]'),
+      reviews: JSON.parse(localStorage.getItem('demo_reviews') || '[]'),
+      tickets: JSON.parse(localStorage.getItem('demo_tickets') || '[]'),
+      reports: JSON.parse(localStorage.getItem('demo_reports') || '[]')
+    };
+
+    /* ------------------ Render functions ------------------ */
+    function renderProducts(){
+      const el = document.getElementById('productList'); el.innerHTML = '';
+      state.products.forEach(p=>{
+        const card = document.createElement('div'); card.className='product';
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.title}" />
+          <strong>${p.title}</strong>
+          <div class="meta"><span>₹${p.price}</span><span class="muted">ID:${p.id}</span></div>
+          <div style="display:flex; gap:8px; margin-top:6px">
+            <button onclick="addToCart('${p.id}')">Buy</button>
+            <button class="secondary" onclick="toggleWishlist('${p.id}')">Wishlist</button>
+          </div>
+        `;
+        el.appendChild(card);
+      })
+    }
+
+    function renderWishlist(){
+      const el = document.getElementById('wishlistList');
+      if(state.wishlist.length===0) return el.innerHTML = '<small class="muted">No wishlist items</small>';
+      el.innerHTML = state.wishlist.map(id=>{
+        const p = state.products.find(x=>x.id===id);
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><img src="${p.img}" style="width:48px;height:40px;object-fit:cover;border-radius:6px"><div style="flex:1"><strong style="font-size:14px">${p.title}</strong><div class=\"muted\">₹${p.price}</div></div><button onclick=\"orderFromWishlist('${id}')\">Buy</button></div>`
+      }).join('')
+    }
+
+    function renderOrders(){
+      const el = document.getElementById('ordersList');
+      if(state.orders.length===0) return el.innerHTML = '<small class="muted">No orders yet</small>';
+      el.innerHTML = state.orders.map(o=>{
+        const p = state.products.find(x=>x.id===o.itemId);
+        return `<div style="border-bottom:1px dashed #eee; padding:8px 0"><strong>${p.title}</strong><div class=\"muted\">Order ID: ${o.orderId} • Date: ${new Date(o.date).toLocaleString()}</div></div>`
+      }).join('')
+    }
+
+    function renderReviews(){
+      const el = document.getElementById('reviewsList');
+      if(state.reviews.length===0) return el.innerHTML = '<small class="muted">No reviews yet</small>';
+      el.innerHTML = state.reviews.map(r=>`<div style="border-bottom:1px solid #eee;padding:8px 0"><strong>${r.name}</strong> <div class=\"muted\">${new Date(r.date).toLocaleString()}</div><p style=\"margin:4px 0 0 0\">${r.text}</p></div>`).join('')
+    }
+
+    function renderTickets(){
+      const el = document.getElementById('tickets');
+      if(state.tickets.length===0) return el.innerHTML = '<small class="muted">No tickets</small>';
+      el.innerHTML = state.tickets.map(t=>`<div style="border-bottom:1px dashed #eee;padding:8px 0"><strong>${t.name}</strong> <div class=\"muted\">${t.issue}</div><p>${t.desc}</p></div>`).join('')
+    }
+
+    function renderReports(){
+      const el = document.getElementById('reports');
+      if(state.reports.length===0) return el.innerHTML = '<small class="muted">No reports</small>';
+      el.innerHTML = state.reports.map(r=>`<div style="border-bottom:1px dashed #eee;padding:8px 0"><strong>Item: ${r.item}</strong> <div class=\"muted\">${r.reason}</div><p>${r.desc||''}</p></div>`).join('')
+    }
+
+    /* ------------------ Actions ------------------ */
+    function saveState(){
+      localStorage.setItem('demo_wishlist', JSON.stringify(state.wishlist));
+      localStorage.setItem('demo_orders', JSON.stringify(state.orders));
+      localStorage.setItem('demo_reviews', JSON.stringify(state.reviews));
+      localStorage.setItem('demo_tickets', JSON.stringify(state.tickets));
+      localStorage.setItem('demo_reports', JSON.stringify(state.reports));
+    }
+
+    function toggleWishlist(id){
+      const idx = state.wishlist.indexOf(id);
+      if(idx>-1) state.wishlist.splice(idx,1);
+      else state.wishlist.push(id);
+      saveState(); renderWishlist();
+      alert('Wishlist updated');
+    }
+
+    function orderFromWishlist(id){
+      placeOrder(id);
+      // remove from wishlist
+      const idx = state.wishlist.indexOf(id); if(idx>-1) state.wishlist.splice(idx,1);
+      saveState(); renderWishlist(); renderOrders();
+    }
+
+    function addToCart(id){
+      placeOrder(id);
+      renderOrders();
+    }
+
+    function placeOrder(itemId){
+      const order = {orderId: 'ORD' + Math.random().toString(36).slice(2,8).toUpperCase(), itemId, date: Date.now()};
+      state.orders.unshift(order); saveState(); alert('Order placed: ' + order.orderId);
+      renderOrders();
+    }
+
+    /* ------------------ Form validations (Registration/Login) ------------------ */
+    // Basic client-side registration that stores user in localStorage (demo only)
+    document.getElementById('registerForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('rname').value.trim();
+      const email = document.getElementById('remail').value.trim().toLowerCase();
+      const pass = document.getElementById('rpassword').value;
+      const cpass = document.getElementById('rcpassword').value;
+      if(!name || !email || pass.length < 6){ return alert('Please fill correctly. Password min 6 characters.'); }
+      if(pass !== cpass) return alert('Passwords do not match');
+
+      // simple email format check
+      if(!/^\S+@\S+\.\S+$/.test(email)) return alert('Enter a valid email');
+
+      // save user (demo) - in real apps use server, hashing, validation
+      const users = JSON.parse(localStorage.getItem('demo_users')||'[]');
+      if(users.find(u=>u.email===email)) return alert('Email already registered');
+      users.push({name,email,password:pass});
+      localStorage.setItem('demo_users', JSON.stringify(users));
+      alert('Registered successfully — please login');
+      document.getElementById('registerForm').reset();
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const email = document.getElementById('lemail').value.trim().toLowerCase();
+      const pass = document.getElementById('lpassword').value;
+      const users = JSON.parse(localStorage.getItem('demo_users')||'[]');
+      const user = users.find(u=>u.email===email && u.password===pass);
+      if(!user) return alert('Invalid credentials');
+      // set session
+      sessionStorage.setItem('demo_user', JSON.stringify({name:user.name,email:user.email}));
+      showAccount();
+      alert('Logged in as ' + user.name);
+      document.getElementById('loginForm').reset();
+    });
+
+    function showAccount(){
+      const u = JSON.parse(sessionStorage.getItem('demo_user'));
+      if(!u) return;
+      document.getElementById('registerBox').style.display='none';
+      document.getElementById('loginBox').style.display='none';
+      document.getElementById('accountActions').style.display='block';
+      document.getElementById('userNameDisplay').textContent = u.name;
+      renderOrders(); renderWishlist();
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', function(){
+      sessionStorage.removeItem('demo_user');
+      document.getElementById('registerBox').style.display='block';
+      document.getElementById('loginBox').style.display='block';
+      document.getElementById('accountActions').style.display='none';
+      alert('Logged out');
+    });
+
+    document.getElementById('viewOrders').addEventListener('click', ()=>{ location.hash = '#ordersList'; alert('Orders displayed on right section') });
+    document.getElementById('viewWishlist').addEventListener('click', ()=>{ location.hash = '#wishlistList'; alert('Wishlist displayed on right section') });
+
+    /* ------------------ Reviews */
+    document.getElementById('reviewForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('reviewName').value.trim();
+      const text = document.getElementById('reviewText').value.trim();
+      if(!name || !text) return alert('Fill review name and text');
+      state.reviews.unshift({name,text,date:Date.now()}); saveState(); renderReviews(); document.getElementById('reviewForm').reset();
+    });
+
+    /* ------------------ Tickets */
+    document.getElementById('ticketForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('ticketName').value.trim();
+      const issue = document.getElementById('issue').value.trim();
+      const desc = document.getElementById('issueDesc').value.trim();
+      if(!name || !issue) return alert('Provide name and issue');
+      state.tickets.unshift({name,issue,desc,date:Date.now()}); saveState(); renderTickets(); document.getElementById('ticketForm').reset();
+    });
+
+    /* ------------------ Reporting ------------------ */
+    document.getElementById('reportForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const item = document.getElementById('reportItem').value.trim();
+      const reason = document.getElementById('reportReason').value;
+      const desc = document.getElementById('reportDesc').value.trim();
+      if(!item) return alert('Specify item');
+      state.reports.unshift({item,reason,desc,date:Date.now()}); saveState(); renderReports(); document.getElementById('reportForm').reset();
+    });
+
+    /* ------------------ Init ------------------ */
+    (function init(){
+      renderProducts(); renderWishlist(); renderOrders(); renderReviews(); renderTickets(); renderReports();
+      // if user in session show account
+      if(sessionStorage.getItem('demo_user')) showAccount();
+
+      // link to account anchor behaviour
+      document.getElementById('accountLink').addEventListener('click', function(e){ e.preventDefault(); location.hash='#account'; window.scrollTo({top:document.getElementById('account').offsetTop-20, behavior:'smooth'}) });
+
+    })();
+  </script>
+</body>
+</html>
