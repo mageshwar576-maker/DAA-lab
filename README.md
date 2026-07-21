@@ -230,23 +230,22 @@ After studying this repository, you will understand:
 Clone the repository
 
 ```bash
-git clone https://github.com/your-username/your-repository-name.git
+git clone https://github.com/mageshwar576-maker/DAA-lab.git
 ```
 
 Go to the repository
 
 ```bash
-cd your-repository-name
+cd DAA-lab
 ```
 
 Run any program
 
 ```bash
-python program1.py
-python program2.py
-python program3.py
-python program4.py
-python program5.py
+Untitled0.py
+Untitled1.py
+Untitled2.py
+Untitled 3.py
 ```
 
 ---
@@ -256,10 +255,10 @@ python program5.py
 ```
 DAA-Algorithms/
 │
-├── program1.py   # Interpolation Search vs Binary Search
-├── program2.py   # String Matching Algorithms
-├── program3.py   # Prim's & Kruskal's MST
-├── program4.py   # Dijkstra's Shortest Path
+├── Untitled0.py   # Interpolation Search vs Binary Search
+├── Untitled1.py   # String Matching Algorithms
+├── Untitled2.py   # Prim's & Kruskal's MST
+├── Untitled3.py   # Dijkstra's Shortest Path
 ├── program5.py   # Divide and Conquer Min-Max
 │
 └── README.md
